@@ -35,7 +35,58 @@ import {settingStore} from "@/stores/drawer.js";
 const getSettingStore = settingStore()
 
 const handleSelectMenu = (type) => {
-  console.log(type)
+  // console.log(type)
+  switch (type) {
+    case "new":
+      break
+    case "save":
+      break
+    case "backgroundImage":
+      uploadImage(1)
+      break
+    case "decorativeImage":
+      uploadImage(2)
+      break
+    case "about":
+      break
+    default:
+      break;
+  }
+}
+
+// 上传图片函数
+const uploadImage = (type) => {
+  const fileUpload = document.createElement("input")
+  fileUpload.type = "file"
+  fileUpload.accept = "image/*"
+  fileUpload.addEventListener("change", (e) => {
+    const windowURL = window.URL || window.webkitURL
+    const fileObj = e.target.files[0]
+    const imageURL = windowURL.createObjectURL(fileObj)
+    if (type === 1) {
+      getSettingStore.backgroundImageURL = imageURL
+    } else {
+      const image = new Image()
+      image.src = imageURL
+      image.onload = () => {
+        const position = {
+          id: new Date(),
+          index: getSettingStore.decorativeImageURL.length ?? 0,
+          src: imageURL,
+          width: image.width,
+          height: image.height,
+          x: image.width / 2,
+          y: image.height / 2,
+        }
+        if (typeof getSettingStore.decorativeImageURL === "object") {
+          getSettingStore.decorativeImageURL.push(position)
+        } else {
+          getSettingStore.decorativeImageURL = [position]
+        }
+      }
+    }
+  })
+  fileUpload.click()
 }
 
 </script>

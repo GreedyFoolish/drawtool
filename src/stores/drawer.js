@@ -2,8 +2,15 @@ import {defineStore} from "pinia";
 
 export const settingStore = defineStore("settingStore", {
     state: () => ({
+        pageZoom: 1,
+        backgroundIns: null,
         activeIndex: "edit",
-        timestamp: new Date().getTime(),
+        backgroundImageURL: "",
+        decorativeImageURL: [],
+        backgroundSetting: {
+            width: 400,
+            height: 300,
+        },
     }),
     getters:{
 
