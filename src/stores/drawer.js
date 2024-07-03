@@ -11,6 +11,8 @@ export const settingStore = defineStore("settingStore", {
             width: 400,
             height: 300,
         },
+        selectTool: "pen",
+        toolbarConfig: {}
     }),
     getters:{
 
