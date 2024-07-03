@@ -5,7 +5,6 @@
       <Decorative v-for="(item,key) in getSettingStore.decorativeImageURL"
                   :key="key"
                   :item="item"
-                  @remove="()=>delete getSettingStore.decorativeImageURL[key]"
       ></Decorative>
     </div>
   </div>

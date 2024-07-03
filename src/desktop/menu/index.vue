@@ -69,20 +69,16 @@ const uploadImage = (type) => {
       const image = new Image()
       image.src = imageURL
       image.onload = () => {
+        const id = new Date().getTime()
         const position = {
-          id: new Date(),
-          index: getSettingStore.decorativeImageURL.length ?? 0,
+          id,
           src: imageURL,
           width: image.width,
           height: image.height,
           x: image.width / 2,
           y: image.height / 2,
         }
-        if (typeof getSettingStore.decorativeImageURL === "object") {
-          getSettingStore.decorativeImageURL.push(position)
-        } else {
-          getSettingStore.decorativeImageURL = [position]
-        }
+        getSettingStore.decorativeImageURL[id] = position
       }
     }
   })

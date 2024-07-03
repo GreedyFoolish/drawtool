@@ -6,7 +6,7 @@ export const settingStore = defineStore("settingStore", {
         backgroundIns: null,
         activeIndex: "edit",
         backgroundImageURL: "",
-        decorativeImageURL: [],
+        decorativeImageURL: {},
         backgroundSetting: {
             width: 400,
             height: 300,
