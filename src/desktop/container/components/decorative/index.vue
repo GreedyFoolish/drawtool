@@ -3,20 +3,19 @@
     <img :src="item.src"
          alt="装饰图" @mousedown="handleMouseDown"
          draggable="false"
-         @contextmenu.prevent="openMenu($event,item)"
+         @contextmenu.prevent="openMenu($event)"
     >
     <!-- 右键菜单部分 -->
-    <ul v-show="contextMenuConfig.visible"
-        class="contextmenu"
-        :style="getContextMenuStyle"
-    >
-      <li @click="handleDelete">删除</li>
-    </ul>
+    <contextMenu :visible="contextMenuConfig.visible"
+                 :config="contextMenuConfig"
+                 :menuList="menuList"
+    ></contextMenu>
   </div>
 </template>
 <script setup>
-import {computed, ref, watch} from "vue";
+import {computed, getCurrentInstance, ref, watch} from "vue";
 import {settingStore} from "@/stores/drawer.js";
+import contextMenu from "@/desktop/container/components/contextMenu/index.vue"
 
 const props = defineProps(["item"]);
 const getSettingStore = settingStore()
@@ -34,11 +33,19 @@ const contextMenuConfig = ref({
   visible: false,
   x: 0,
   y: 0,
-  rightClickItem: null
-})
-const getContextMenuStyle = computed(() => {
-  return `left:${contextMenuConfig.value.x}px;top:${contextMenuConfig.value.y}px;`;
+  closeMenu: () => {
+  },
 });
+const menuList = [
+  {
+    menuName: getCurrentInstance().proxy.$getLangText("删除"),
+    rightClickItem: props.item,
+    rightClickHandle: () => {
+      delete getSettingStore.decorativeImageURL[itemConfig.value.id]
+    },
+  },
+];
+
 const handleMouseDown = (event) => {
   const reat = getSettingStore.backgroundIns.getRect();
   const start = {
@@ -107,30 +114,14 @@ const handleMouseDown = (event) => {
   document.addEventListener("mouseup", stop);
 };
 
-const openMenu = (e, item) => {
+const openMenu = (e) => {
   contextMenuConfig.value.visible = true;
   contextMenuConfig.value.x = e.offsetX;
   contextMenuConfig.value.y = e.offsetY;
-  contextMenuConfig.value.rightClickItem = item;
+  contextMenuConfig.value.closeMenu = () => {
+    contextMenuConfig.value.visible = false;
+  };
 }
-
-const closeMenu = () => {
-  contextMenuConfig.value.visible = false;
-}
-
-const handleDelete = () => {
-  delete getSettingStore.decorativeImageURL[itemConfig.value.id]
-}
-
-watch(() => contextMenuConfig.value.visible,
-    (value, oldValue) => {
-      if (value) {
-        document.body.addEventListener("click", closeMenu)
-      } else {
-        document.body.removeEventListener("click", closeMenu)
-      }
-    }
-)
 </script>
 
 <style scoped lang="stylus">
@@ -139,29 +130,5 @@ watch(() => contextMenuConfig.value.visible,
   position absolute
   transform translate(-50%, -50%)
   border 1px dashed #aaaaaa
-
-  .contextmenu {
-    width 44px
-    margin 0
-    padding 4px
-    position absolute
-    background #fff
-    color #333
-    list-style-type none
-    border 1px solid #aaa
-    font-size 12px
-    cursor pointer
-    user-select none
-
-    li {
-      margin 0
-      padding 5px
-    }
-
-    li:hover {
-      background #eee
-    }
-  }
-
 }
 </style>
