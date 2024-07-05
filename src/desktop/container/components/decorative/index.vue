@@ -39,7 +39,7 @@ const contextMenuConfig = ref({
 const menuList = [
   {
     menuName: getCurrentInstance().proxy.$getLangText("删除"),
-    rightClickItem: props.item,
+    rightClickItem: itemConfig.value,
     rightClickHandle: () => {
       delete getSettingStore.decorativeImageURL[itemConfig.value.id]
     },

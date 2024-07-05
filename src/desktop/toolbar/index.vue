@@ -78,15 +78,15 @@ const defaultConfig = {
 const sliderValue = ref(1)
 const colorValue = ref("rgba(30, 144, 255, 1)")
 const predefineColors = ref([
-  '#ff4500',
-  '#ff8c00',
-  '#ffd700',
-  '#90ee90',
-  '#00ced1',
-  '#1e90ff',
-  '#c71585',
-  '#ffffff',
-  '#000000',
+  "#ff4500",
+  "#ff8c00",
+  "#ffd700",
+  "#90ee90",
+  "#00ced1",
+  "#1e90ff",
+  "#c71585",
+  "#ffffff",
+  "#000000",
 ])
 const curTool = computed(() => {
   return getSettingStore.selectTool
