@@ -27,6 +27,7 @@ const getImageStyle = computed(() => {
     height:${itemConfig.value.height}px;
     left:${itemConfig.value.x}px;
     top:${itemConfig.value.y}px;
+    z-index:${getSettingStore.drawMode === 'arrow' ? 2 : 0}
   `;
 });
 const contextMenuConfig = ref({
@@ -130,5 +131,6 @@ const openMenu = (e) => {
   position absolute
   transform translate(-50%, -50%)
   border 1px dashed #aaaaaa
+
 }
 </style>

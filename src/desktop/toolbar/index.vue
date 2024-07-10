@@ -28,6 +28,7 @@
 <script setup>
 import {computed, ref} from "vue";
 import {settingStore} from "@/stores/drawer.js";
+import arrow from "@/assets/icon/arrow.png"
 import pen from "@/assets/icon/pen.png"
 import eraser from "@/assets/icon/eraser.png"
 import word from "@/assets/icon/word.png"
@@ -38,34 +39,46 @@ import triangle from "@/assets/icon/triangle.png"
 const getSettingStore = settingStore()
 const toolList = [
   {
+    name: "arrow",
+    src: arrow,
+    mark: "箭头",
+    mode: "arrow",
+  },
+  {
     name: "pen",
     src: pen,
-    mark: "铅笔"
+    mark: "铅笔",
+    mode: "draw",
   },
   {
     name: "eraser",
     src: eraser,
-    mark: "橡皮"
+    mark: "橡皮",
+    mode: "eraser",
   },
   {
     name: "word",
     src: word,
-    mark: "文字"
+    mark: "文字",
+    mode: "word",
   },
   {
     name: "straight",
     src: straight,
-    mark: "直线"
+    mark: "直线",
+    mode: "straight",
   },
   {
     name: "circular",
     src: circular,
-    mark: "椭圆"
+    mark: "椭圆",
+    mode: "circular",
   },
   {
     name: "triangle",
     src: triangle,
-    mark: "三角形"
+    mark: "三角形",
+    mode: "triangle",
   },
 ]
 const defaultConfig = {
@@ -106,6 +119,7 @@ const initToolbarConfig = () => {
 initToolbarConfig()
 const toolClick = (item) => {
   getSettingStore.selectTool = item.name
+  getSettingStore.drawMode = item.mode
   sliderValue.value = getSettingStore.toolbarConfig[item.name].size
   colorValue.value = getSettingStore.toolbarConfig[item.name].color
 }

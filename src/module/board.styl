@@ -1,0 +1,35 @@
+.boardParent {
+  width 100%
+  height 100%
+  position relative
+
+  .writeBoard,
+  .writeRemoveBoard,
+  .boardSvg {
+    z-index 1
+    width 100%
+    height 100%
+    position absolute
+    left 0
+    top 0
+    pointer-events none
+  }
+
+  &[data-mode="arrow"] {
+    .writeBoard {
+      pointer-events none
+    }
+  }
+
+  &[data-mode="draw"] {
+    .writeBoard {
+      pointer-events auto
+    }
+  }
+
+  &[data-mode="eraser"] {
+    .writeRemoveBoard {
+      pointer-events auto
+    }
+  }
+}

@@ -6,11 +6,13 @@
                   :key="key"
                   :item="item"
       ></Decorative>
+      <WriteBoard></WriteBoard>
     </div>
   </div>
 </template>
 <script setup>
 import Decorative from "@/desktop/container/components/decorative/index.vue";
+import WriteBoard from "@/desktop/container/components/writeBoard/index.vue";
 import {defineExpose, ref, watch} from "vue";
 import {settingStore} from "@/stores/drawer.js";
 
