@@ -2,7 +2,7 @@
   <div class="backgroundContainer" ref="backgroundContainer">
     <!-- 装饰图容器 -->
     <div class="decorativeContainer">
-      <Decorative v-for="(item,key) in getSettingStore.decorativeImageURL"
+      <Decorative v-for="(item,key) in getSettingStore.decorativeImageList"
                   :key="key"
                   :item="item"
       ></Decorative>

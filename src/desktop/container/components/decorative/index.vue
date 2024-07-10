@@ -41,7 +41,7 @@ const menuList = [
     menuName: getCurrentInstance().proxy.$getLangText("删除"),
     rightClickItem: itemConfig.value,
     rightClickHandle: () => {
-      delete getSettingStore.decorativeImageURL[itemConfig.value.id]
+      delete getSettingStore.decorativeImageList[itemConfig.value.id]
     },
   },
 ];
@@ -87,8 +87,8 @@ const handleMouseDown = (event) => {
     };
     // 此处的两种情况可以合并，但如果存在多页的情况，可以在此基础上进行修改
     if (checkBorder()) {
-      getSettingStore.decorativeImageURL[id] = {
-        ...getSettingStore.decorativeImageURL[id],
+      getSettingStore.decorativeImageList[id] = {
+        ...getSettingStore.decorativeImageList[id],
         x: itemConfig.value.x,
         y: itemConfig.value.y,
       };
@@ -101,8 +101,8 @@ const handleMouseDown = (event) => {
           top,
           Math.min(reat.height - top, itemConfig.value.y)
       );
-      getSettingStore.decorativeImageURL[id] = {
-        ...getSettingStore.decorativeImageURL[id],
+      getSettingStore.decorativeImageList[id] = {
+        ...getSettingStore.decorativeImageList[id],
         x: itemConfig.value.x,
         y: itemConfig.value.y,
       };

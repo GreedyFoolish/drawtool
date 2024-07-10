@@ -78,7 +78,7 @@ const uploadImage = (type) => {
           x: image.width / 2,
           y: image.height / 2,
         }
-        getSettingStore.decorativeImageURL[id] = position
+        getSettingStore.decorativeImageList[id] = position
       }
     }
   })

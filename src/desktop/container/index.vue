@@ -31,7 +31,7 @@ const getRect = () => {
   return drawContainer.value.getBoundingClientRect()
 }
 
-watch(() => [getSettingStore.backgroundImageURL, getSettingStore.decorativeImageURL],
+watch(() => [getSettingStore.backgroundImageURL, getSettingStore.decorativeImageList],
     ([curBackgroundURL, curdDecorativeURL], [oldURL, oldURL2]) => {
       const image = new Image();
       image.src = curBackgroundURL;
