@@ -38,6 +38,12 @@ watch(() => getSettingStore.drawMode, (curMode, oldMode) => {
     board.setMode(curMode)
   }
 })
+watch(() => getSettingStore.toolbarConfig, (curConfig, oldConfig) => {
+  if (board) {
+    // console.log(curConfig, oldConfig)
+    board.setDrawConfig(curConfig)
+  }
+})
 
 onMounted(() => {
   board = new Board("#drawBoard", config);

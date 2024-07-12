@@ -3,6 +3,7 @@ import {Core} from "@/module/core.js";
 import {StrokeManager} from "./strokeManager.js";
 import {Stroke} from "@/module/stroke.js";
 import {Point} from "@/module/point.js";
+import {Textarea} from "@/module/textarea.js";
 
 export class Board {
     _content
@@ -21,6 +22,7 @@ export class Board {
     _writeBoard = document.createElement("div")
     _writeRemoveBoard = document.createElement("div")
     _strokeManager = new StrokeManager(this)
+    _addTextarea = false
 
     constructor(content, config = {
         mode: "draw",
@@ -121,32 +123,11 @@ export class Board {
 
     addBoardEvent() {
         this._writeBoard.addEventListener("pointerdown", (e) => {
-            const stroke = new Stroke(
-                {
-                    ...this._drawConfig,
-                    start: {...this._drawConfig?.start},
-                    end: {...this._drawConfig?.end}
-                },
-                []
-            )
-            const id = this._strokeManager.add(stroke)
-            this.triggerEvent("beforeDraw", stroke, id)
-
-            const down = (e) => {
-                const {x, y} = this._writeBoard.getBoundingClientRect()
-                const point = {x: e.x, y: e.y}
-                this.addPoint(id, {x: point.x - x, y: point.y - y})
+            if (this._mode === "draw") {
+                this.draw(e)
+            } else if (this._mode === "word") {
+                this.word(e)
             }
-            down(e)
-            const up = () => {
-                this._writeBoard.removeEventListener("pointermove", down)
-                this._writeBoard.removeEventListener("pointerup", up)
-                this._writeBoard.removeEventListener("pointerleave", up)
-                this.triggerEvent("afterDraw", stroke, id)
-            }
-            this._writeBoard.addEventListener("pointermove", down)
-            this._writeBoard.addEventListener("pointerup", up)
-            this._writeBoard.addEventListener("pointerleave", up)
         })
         this._writeRemoveBoard.addEventListener("pointerdown", (e) => {
             const down = (e) => {
@@ -164,6 +145,51 @@ export class Board {
             this._writeRemoveBoard.addEventListener("pointerleave", up)
         })
 
+    }
+
+    draw(e) {
+        const stroke = new Stroke(
+            {
+                ...this._drawConfig,
+                start: {...this._drawConfig?.start},
+                end: {...this._drawConfig?.end}
+            },
+            []
+        )
+        const id = this._strokeManager.add(stroke)
+        this.triggerEvent("beforeDraw", stroke, id)
+
+        const down = (e) => {
+            const {x, y} = this._writeBoard.getBoundingClientRect()
+            const point = {x: e.x, y: e.y}
+            this.addPoint(id, {x: point.x - x, y: point.y - y})
+        }
+        down(e)
+        const up = () => {
+            this._writeBoard.removeEventListener("pointermove", down)
+            this._writeBoard.removeEventListener("pointerup", up)
+            this._writeBoard.removeEventListener("pointerleave", up)
+            this.triggerEvent("afterDraw", stroke, id)
+        }
+        this._writeBoard.addEventListener("pointermove", down)
+        this._writeBoard.addEventListener("pointerup", up)
+        this._writeBoard.addEventListener("pointerleave", up)
+    }
+
+    word(e) {
+        const {x, y} = this._writeBoard.getBoundingClientRect()
+        const start = {x: e.x, y: e.y}
+        if (this._addTextarea === false) {
+            const word = new Textarea(
+                this,
+                {
+                    x: (start.x - x).toFixed(2),
+                    y: (start.y - y).toFixed(2),
+                    fontSize: 30,
+                }
+            )
+            this._addTextarea = true
+        }
     }
 
     /**

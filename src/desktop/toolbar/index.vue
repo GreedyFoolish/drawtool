@@ -13,12 +13,14 @@
         <el-slider v-model="sliderValue" :min="1" :max="40"
                    show-input :format-tooltip="(v) => `${v} 像素`"
                    @change="sliderChange"
+                   :disabled="getSettingStore.drawMode==='word'"
         />
       </div>
       <div class="colorContent">
         <el-color-picker v-model="colorValue" show-alpha
                          :predefine="predefineColors"
                          @change="colorChange"
+                         :disabled="getSettingStore.drawMode==='word'"
         />
       </div>
     </div>
