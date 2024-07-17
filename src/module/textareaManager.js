@@ -56,8 +56,10 @@ export class TextareaManager {
 
     clear() {
         for (const [id, textarea] of this._map) {
-            textarea.unMount()
-            this._map.delete(id)
+            if (textarea._textValue === undefined) {
+                textarea.unMount()
+                this._map.delete(id)
+            }
         }
         return this
     }
@@ -69,7 +71,7 @@ export class TextareaManager {
     }
 
     removeById(id) {
-        this._map.get(id).unMount()
+        this._map.get(id).remove()
         this._map.delete(id)
         return this
     }
@@ -80,9 +82,9 @@ export class TextareaManager {
      * @param y 传入点垂直坐标
      * @returns {*} 与传入点有交集的文本
      */
-    getTextareaByPoint({x, y}) {
-        return this.getTextareaList().filter(stroke => {
-            const rect = stroke.rect
+    getTextareaListByPoint({x, y}) {
+        return this.getTextareaList().filter(textarea => {
+            const rect = textarea.rect
             return !(rect.left > x || rect.right < x || rect.top > y || rect.bottom < y)
         })
     }

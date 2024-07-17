@@ -102,6 +102,10 @@ export class Textarea {
         this._textarea.remove()
     }
 
+    remove() {
+        this._g.remove()
+    }
+
     /**
      * 获取当前文本的视口布局信息
      * @returns {DOMRect} 视口布局信息

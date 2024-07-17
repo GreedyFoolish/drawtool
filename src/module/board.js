@@ -223,6 +223,10 @@ export class Board {
         for (const stroke of strokes) {
             this._strokeManager.remove(stroke)
         }
+        const textareaList = this._textareaManager.getTextareaListByPoint(zoomPoint)
+        for (const textarea of textareaList) {
+            this._textareaManager.remove(textarea)
+        }
         return this
     }
 }
