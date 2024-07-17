@@ -4,6 +4,7 @@ import {StrokeManager} from "./strokeManager.js";
 import {Stroke} from "@/module/stroke.js";
 import {Point} from "@/module/point.js";
 import {Textarea} from "@/module/textarea.js";
+import {TextareaManager} from "@/module/textareaManager.js";
 
 export class Board {
     _content
@@ -22,7 +23,7 @@ export class Board {
     _writeBoard = document.createElement("div")
     _writeRemoveBoard = document.createElement("div")
     _strokeManager = new StrokeManager(this)
-    _addTextarea = false
+    _textareaManager = new TextareaManager(this)
 
     constructor(content, config = {
         mode: "draw",
@@ -80,6 +81,7 @@ export class Board {
         if (this._modeSet.has(mode)) {
             this._mode = mode
             this._parent.setAttribute("data-mode", mode)
+            this._textareaManager.clear()
             this.triggerEvent("modeChange", this._mode)
         } else {
             // throw new Error("Not allowed mode")
@@ -179,17 +181,15 @@ export class Board {
     word(e) {
         const {x, y} = this._writeBoard.getBoundingClientRect()
         const start = {x: e.x, y: e.y}
-        if (this._addTextarea === false) {
-            const word = new Textarea(
-                this,
-                {
-                    x: (start.x - x).toFixed(2),
-                    y: (start.y - y).toFixed(2),
-                    fontSize: 30,
-                }
-            )
-            this._addTextarea = true
-        }
+        const textarea = new Textarea(
+            this,
+            {
+                x: (start.x - x).toFixed(2),
+                y: (start.y - y).toFixed(2),
+                fontSize: 30,
+            },
+        )
+        this._textareaManager.add(textarea)
     }
 
     /**
@@ -219,7 +219,7 @@ export class Board {
             x: point.x / parseFloat(zoom),
             y: point.y / parseFloat(zoom)
         }
-        const strokes = this._strokeManager.getStrokesByPoint(zoomPoint)
+        const strokes = this._strokeManager.getStrokeListByPoint(zoomPoint)
         for (const stroke of strokes) {
             this._strokeManager.remove(stroke)
         }

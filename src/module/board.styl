@@ -19,11 +19,19 @@
     .writeBoard {
       pointer-events none
     }
+
+    .boardSvg {
+      pointer-events auto
+    }
   }
 
   &[data-mode="draw"] {
     .writeBoard {
       pointer-events auto
+    }
+
+    .boardSvg {
+      pointer-events none
     }
   }
 
@@ -31,11 +39,19 @@
     .writeRemoveBoard {
       pointer-events auto
     }
+
+    .boardSvg {
+      pointer-events none
+    }
   }
 
   &[data-mode="word"] {
     .writeBoard {
       pointer-events auto
+    }
+
+    .boardSvg {
+      pointer-events none
     }
   }
 }

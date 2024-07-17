@@ -22,6 +22,18 @@ export class StrokeManager {
         this.addEvent()
     }
 
+    getStrokeIdList() {
+        return [...this._map.keys()]
+    }
+
+    getStrokeList() {
+        return [...this._map.values()]
+    }
+
+    getById(id) {
+        return this._map.get(id)
+    }
+
     addEvent() {
         this._svg.addEventListener("pointerdown", e => {
             const id = (e.target).getAttribute("data-id")
@@ -39,20 +51,12 @@ export class StrokeManager {
         if (stroke.constructor === Stroke) {
             return this.addStroke(stroke)
         } else if (stroke.constructor === StrokeManager) {
-            return stroke.getStrokes().filter(s => s.constructor === Stroke).map(s => this.addStroke(s))
+            return stroke.getStrokeList().filter(s => s.constructor === Stroke).map(s => this.addStroke(s))
         } else if (stroke.constructor === Array) {
             return stroke.filter(s => s.constructor === Stroke).map(s => this.addStroke(s))
         } else {
             throw new Error("stroke type error")
         }
-    }
-
-    getStrokeIdList() {
-        return [...this._map.keys()]
-    }
-
-    getStrokes() {
-        return [...this._map.values()]
     }
 
     addStroke(stroke) {
@@ -101,18 +105,14 @@ export class StrokeManager {
         return this
     }
 
-    getById(id) {
-        return this._map.get(id)
-    }
-
     /**
      * 获取与传入点有交集的笔画
      * @param x 传入点水平坐标
      * @param y 传入点垂直坐标
      * @returns {*} 与传入点有交集的笔画
      */
-    getStrokesByPoint({x, y}) {
-        return this.getStrokes().filter(stroke => {
+    getStrokeListByPoint({x, y}) {
+        return this.getStrokeList().filter(stroke => {
             const rect = stroke.rect
             return !(rect.left > x || rect.right < x || rect.top > y || rect.bottom < y)
         })
@@ -123,7 +123,7 @@ export class StrokeManager {
      * @param id 传入 id
      * @returns {DOMRect} 笔画的视口布局信息
      */
-    getStrokesRectById(id = this.getStrokeIdList()) {
+    getStrokeListRectById(id = this.getStrokeIdList()) {
         const idList = [id].flat(Infinity).filter(id => this._map.has(id))
         if (idList.length > 0) {
             const rect = {

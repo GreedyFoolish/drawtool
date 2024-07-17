@@ -9,20 +9,23 @@ export class Textarea {
         cols: 20,
         autofocus: true,
     }
-    _text
+    _contain
+    _textareaManager
+    _textValue
     _id = Core.uuid()
     _textarea = document.createElement("textarea")
     _g = document.createElementNS("http://www.w3.org/2000/svg", "g")
 
-    constructor(board, config) {
+    constructor(board, config, textValue) {
         this._board = board
         this.setConfig(config)
-        board._writeBoard.append(this._textarea)
+        this._textValue = textValue
         this.addEvent()
+        return this
     }
 
     setConfig(config) {
-        this._config = {...this._config, ...config}
+        this._config = JSON.parse(JSON.stringify({...this._config, ...config}))
         const {x, y, fontFamily, fontSize, rows, cols, autofocus} = this._config
         this._textarea.style.position = "absolute"
         this._textarea.style.left = x + "px"
@@ -34,6 +37,9 @@ export class Textarea {
         this._textarea.autofocus = autofocus
     }
 
+    /**
+     * 添加文本框失去焦点的事件处理函数
+     */
     addEvent() {
         this._textarea.addEventListener("blur", (e) => {
             const {x, y, fontFamily, fontSize, rows, cols} = this._config
@@ -70,9 +76,37 @@ export class Textarea {
                 this._g.id = this._id
                 this._g.innerHTML = `<text font-family="${fontFamily}" font-size="${fontSize}">${resWord}</text>`
                 this._board._strokeManager._svg.append(this._g)
-                this._textarea.style.display = "none"
-                this._board._addTextarea = false
+                // this._textarea.style.display = "none"
+                this._textarea.remove()
+                this._textValue = value
             }
         })
+    }
+
+    /**
+     * 将当前文本的文本管理对象绑定为传入的文本管理对象
+     * @param textareaManager 传入的文本管理对象
+     * @returns {string}
+     */
+    bind(textareaManager) {
+        this._textareaManager = textareaManager
+        return this._id
+    }
+
+    mount(contain) {
+        this._contain = contain
+        this._contain.append(this._textarea)
+    }
+
+    unMount() {
+        this._textarea.remove()
+    }
+
+    /**
+     * 获取当前文本的视口布局信息
+     * @returns {DOMRect} 视口布局信息
+     */
+    get rect() {
+        return this._g.getBoundingClientRect()
     }
 }
