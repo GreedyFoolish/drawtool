@@ -19,7 +19,6 @@ export class StrokeManager {
         this._svg.classList.add("boardSvg")
         this._svg.setAttribute("draggable", false)
         this._svg.innerHTML = `<defs></defs>`
-        this.addEvent()
     }
 
     getStrokeIdList() {
@@ -34,12 +33,8 @@ export class StrokeManager {
         return this._map.get(id)
     }
 
-    addEvent() {
-        this._svg.addEventListener("pointerdown", e => {
-            const id = (e.target).getAttribute("data-id")
-            this._selected.value = this._map.get(id)
-            e.stopPropagation()
-        })
+    addBorder(border) {
+        this._board.addBorder(border)
     }
 
     /**
@@ -103,6 +98,14 @@ export class StrokeManager {
         this._map.get(id).unMount()
         this._map.delete(id)
         return this
+    }
+
+    /**
+     * 获取当前笔画的视口布局信息
+     * @returns {DOMRect} 视口布局信息
+     */
+    get rect() {
+        return this._svg.getBoundingClientRect()
     }
 
     /**

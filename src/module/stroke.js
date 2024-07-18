@@ -23,26 +23,7 @@ export class Stroke {
         this._config = JSON.parse(JSON.stringify({...this._config, ...config}))
         this.reDraw()
         this.add(points)
-        this._g.id = this._id
-        this._g.addEventListener("mousedown", (e) => {
-            const start = {
-                x: e.x,
-                y: e.y,
-                offsetX: this._offset.x,
-                offsetY: this._offset.y,
-            }
-            const move = (e) => {
-                this._offset.x = e.x - start.x + start.offsetX
-                this._offset.y = e.y - start.y + start.offsetY
-            }
-            const end = (e) => {
-                move(e)
-                document.body.removeEventListener("mousemove", move)
-                document.body.removeEventListener("mouseup", end)
-            }
-            document.body.addEventListener("mousemove", move)
-            document.body.addEventListener("mouseup", end)
-        })
+        this.addEvent()
     }
 
     /**
@@ -67,6 +48,65 @@ export class Stroke {
         }
         this.reDraw()
         return this
+    }
+
+    /**
+     * 添加笔画鼠标拖动和失去焦点的事件处理函数
+     */
+    addEvent() {
+        this._g.id = this._id
+        // 笔画鼠标拖动事件
+        this._g.addEventListener("mousedown", (e) => {
+            const rect = this.rect
+            if (rect) {
+                this.addBorder(rect)
+            }
+            const start = {
+                x: e.x,
+                y: e.y,
+                offsetX: this._offset.x,
+                offsetY: this._offset.y,
+            }
+            const move = (e) => {
+                this._offset.x = e.x - start.x + start.offsetX
+                this._offset.y = e.y - start.y + start.offsetY
+                const rect = this.rect
+                if (rect) {
+                    this.addBorder(rect)
+                }
+            }
+            const end = (e) => {
+                move(e)
+                document.body.removeEventListener("mousemove", move)
+                document.body.removeEventListener("mouseup", end)
+            }
+            document.body.addEventListener("mousemove", move)
+            document.body.addEventListener("mouseup", end)
+        })
+        // 笔画失去焦点事件
+        this._g.addEventListener("blur", (e) => {
+            this._strokeManager.addBorder()
+        })
+    }
+
+    /**
+     * 添加笔画的高亮框
+     * @param rect 笔画的视口布局信息
+     * @param lineWidth 高亮框宽度 默认2px
+     * @param lineStyle 高亮框样式 默认虚线
+     * @param lineColor 高亮框颜色 默认黑色
+     */
+    addBorder(rect, lineWidth = 2, lineStyle = "dashed", lineColor = "black") {
+        const border = document.createElement("div")
+        const svgRect = this._strokeManager.rect
+        const {borderWidth} = this._config
+        border.style.width = `${rect.width + borderWidth - lineWidth}px`
+        border.style.height = `${rect.height + borderWidth - lineWidth}px`
+        border.style.position = "absolute"
+        border.style.left = `${rect.x - svgRect.x - borderWidth / 2}px`
+        border.style.top = `${rect.y - svgRect.y - borderWidth / 2}px`
+        border.style.border = `${lineWidth}px ${lineStyle} ${lineColor}`
+        this._strokeManager.addBorder(border)
     }
 
     /**

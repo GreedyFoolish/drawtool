@@ -21,7 +21,7 @@ export class Core {
         const path = this.getSvgPathFromStroke(stroke._points)
         return `<path d="${path}"
                     fill="none"
-                    data-id="${stroke.id}"
+                    data-id="${stroke._id}"
                     stroke="${_config?.color ?? '#000'}"
                     stroke-width="${_config?.borderWidth ?? 3}"
                     stroke-linejoin="round"

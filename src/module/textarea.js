@@ -15,6 +15,16 @@ export class Textarea {
     _id = Core.uuid()
     _textarea = document.createElement("textarea")
     _g = document.createElementNS("http://www.w3.org/2000/svg", "g")
+    _offset = new Proxy(
+        {x: 0, y: 0},
+        {
+            set: (target, key, newValue, receiver) => {
+                const r = Reflect.set(target, key, newValue, receiver)
+                this._g.setAttribute("transform", `translate(${target.x},${target.y})`)
+                return r
+            }
+        }
+    )
 
     constructor(board, config, textValue) {
         this._board = board
@@ -39,8 +49,10 @@ export class Textarea {
 
     /**
      * 添加文本框失去焦点的事件处理函数
+     * 添加文本鼠标拖动和失去焦点的事件处理函数
      */
     addEvent() {
+        // 文本框失去焦点事件
         this._textarea.addEventListener("blur", (e) => {
             const {x, y, fontFamily, fontSize, rows, cols} = this._config
             const value = e.target.value
@@ -81,6 +93,57 @@ export class Textarea {
                 this._textValue = value
             }
         })
+        // 文本鼠标拖动事件
+        this._g.addEventListener("mousedown", (e) => {
+            const rect = this.rect
+            if (rect) {
+                this.addBorder(rect)
+            }
+            const start = {
+                x: e.x,
+                y: e.y,
+                offsetX: this._offset.x,
+                offsetY: this._offset.y,
+            }
+            const move = (e) => {
+                this._offset.x = e.x - start.x + start.offsetX
+                this._offset.y = e.y - start.y + start.offsetY
+                const rect = this.rect
+                if (rect) {
+                    this.addBorder(rect)
+                }
+            }
+            const end = (e) => {
+                move(e)
+                document.body.removeEventListener("mousemove", move)
+                document.body.removeEventListener("mouseup", end)
+            }
+            document.body.addEventListener("mousemove", move)
+            document.body.addEventListener("mouseup", end)
+        })
+        // 文本失去焦点事件
+        this._g.addEventListener("blur", (e) => {
+            this._board.addBorder()
+        })
+    }
+
+    /**
+     * 添加文本的高亮框
+     * @param rect 文本的视口布局信息
+     * @param lineWidth 高亮框宽度 默认2px
+     * @param lineStyle 高亮框样式 默认虚线
+     * @param lineColor 高亮框颜色 默认黑色
+     */
+    addBorder(rect, lineWidth = 2, lineStyle = "dashed", lineColor = "black") {
+        const border = document.createElement("div")
+        const svgRect = this._board._strokeManager.rect
+        border.style.width = `${rect.width - lineWidth}px`
+        border.style.height = `${rect.height - lineWidth}px`
+        border.style.position = "absolute"
+        border.style.left = `${rect.x - svgRect.x}px`
+        border.style.top = `${rect.y - svgRect.y}px`
+        border.style.border = `${lineWidth}px ${lineStyle} ${lineColor}`
+        this._board.addBorder(border)
     }
 
     /**

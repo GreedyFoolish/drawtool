@@ -192,6 +192,13 @@ export class Board {
         this._textareaManager.add(textarea)
     }
 
+    addBorder(border) {
+        this._writeBoard.innerHTML = ""
+        if (border) {
+            this._writeBoard.append(border)
+        }
+    }
+
     /**
      * 根据传入 id 和 坐标{x, y} 添加点并重新绘制笔画
      * @param id 传入 id

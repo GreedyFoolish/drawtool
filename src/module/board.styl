@@ -15,6 +15,15 @@
     pointer-events none
   }
 
+  svg, g, path {
+    // 去除 svg g path 标签点击后的黑框
+    outline none
+  }
+
+  text, tspan {
+    user-select none
+  }
+
   &[data-mode="arrow"] {
     .writeBoard {
       pointer-events none
