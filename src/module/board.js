@@ -129,6 +129,12 @@ export class Board {
                 this.draw(e)
             } else if (this._mode === "word") {
                 this.word(e)
+            } else if (this._mode === "straight") {
+                this.straight(e)
+            } else if (this._mode === "circular") {
+                this.circular(e)
+            } else if (this._mode === "triangle") {
+                this.triangle(e)
             }
         })
         this._writeRemoveBoard.addEventListener("pointerdown", (e) => {
@@ -150,14 +156,7 @@ export class Board {
     }
 
     draw(e) {
-        const stroke = new Stroke(
-            {
-                ...this._drawConfig,
-                start: {...this._drawConfig?.start},
-                end: {...this._drawConfig?.end}
-            },
-            []
-        )
+        const stroke = new Stroke({...this._drawConfig}, [])
         const id = this._strokeManager.add(stroke)
         this.triggerEvent("beforeDraw", stroke, id)
 
@@ -190,6 +189,58 @@ export class Board {
             },
         )
         this._textareaManager.add(textarea)
+    }
+
+    straight(e) {
+        const stroke = new Stroke({...this._drawConfig})
+        const id = this._strokeManager.add(stroke)
+        const {x, y} = this._writeBoard.getBoundingClientRect()
+        const start = {x: e.x - x, y: e.y - y}
+        this.triggerEvent("beforeDraw", stroke, id)
+
+        const down = (e) => {
+            const {x, y} = this._writeBoard.getBoundingClientRect()
+            const end = {x: e.x - x, y: e.y - y}
+            this.addLine(id, start, end)
+        }
+        down(e)
+        const up = () => {
+            this._writeBoard.removeEventListener("pointermove", down)
+            this._writeBoard.removeEventListener("pointerup", up)
+            this._writeBoard.removeEventListener("pointerleave", up)
+            this.triggerEvent("afterDraw", stroke, id)
+        }
+        this._writeBoard.addEventListener("pointermove", down)
+        this._writeBoard.addEventListener("pointerup", up)
+        this._writeBoard.addEventListener("pointerleave", up)
+    }
+
+    circular(e) {
+        const stroke = new Stroke({...this._drawConfig})
+        const id = this._strokeManager.add(stroke)
+        const {x, y} = this._writeBoard.getBoundingClientRect()
+        const start = {x: e.x - x, y: e.y - y}
+        this.triggerEvent("beforeDraw", stroke, id)
+
+        const down = (e) => {
+            const {x, y} = this._writeBoard.getBoundingClientRect()
+            const end = {x: e.x - x, y: e.y - y}
+            this.addCircular(id, start, end)
+        }
+        down(e)
+        const up = () => {
+            this._writeBoard.removeEventListener("pointermove", down)
+            this._writeBoard.removeEventListener("pointerup", up)
+            this._writeBoard.removeEventListener("pointerleave", up)
+            this.triggerEvent("afterDraw", stroke, id)
+        }
+        this._writeBoard.addEventListener("pointermove", down)
+        this._writeBoard.addEventListener("pointerup", up)
+        this._writeBoard.addEventListener("pointerleave", up)
+    }
+
+    triangle(e) {
+
     }
 
     addBorder(border) {
@@ -236,4 +287,21 @@ export class Board {
         }
         return this
     }
+
+    addLine(id, start, end) {
+        const stroke = this._strokeManager.getById(id)
+        if (stroke) {
+            stroke.addLine(new Point(start.x, start.y), new Point(end.x, end.y))
+            this.triggerEvent("pointChanged", {start, end})
+        }
+    }
+
+    addCircular(id, start, end) {
+        const stroke = this._strokeManager.getById(id)
+        if (stroke) {
+            stroke.addCircular(new Point(start.x, start.y), new Point(end.x, end.y))
+            this.triggerEvent("pointChanged", {start, end})
+        }
+    }
+
 }
