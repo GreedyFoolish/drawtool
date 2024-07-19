@@ -30,6 +30,7 @@
 </template>
 
 <script setup>
+import html2canvas from "html2canvas"
 import {settingStore} from "@/stores/drawer.js";
 
 const getSettingStore = settingStore()
@@ -40,6 +41,7 @@ const handleSelectMenu = (type) => {
     case "new":
       break
     case "save":
+      captureElementAndSaveAsImage("backgroundContainer")
       break
     case "backgroundImage":
       uploadImage(1)
@@ -83,6 +85,25 @@ const uploadImage = (type) => {
     }
   })
   fileUpload.click()
+}
+
+const captureElementAndSaveAsImage = (elementId, filename = "captured-element.png") => {
+  // 获取要截取的元素
+  const element = document.getElementById(elementId)
+  html2canvas(element).then(function (canvas) {
+    // 导出 Canvas 内容为 base64 格式的图片数据，可以选择其他格式如 "image/jpeg"
+    const imageData = canvas.toDataURL("image/png");
+    // 创建一个链接，并将 base64 数据设置为链接的 href 属性
+    const downloadLink = document.createElement("a");
+    downloadLink.href = imageData;
+    // 设置下载的文件名
+    downloadLink.download = filename;
+    // 将链接插入到文档中，模拟点击下载
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    // 清理插入的链接
+    document.body.removeChild(downloadLink);
+  });
 }
 
 </script>
