@@ -240,7 +240,27 @@ export class Board {
     }
 
     triangle(e) {
+        const stroke = new Stroke({...this._drawConfig})
+        const id = this._strokeManager.add(stroke)
+        const {x, y} = this._writeBoard.getBoundingClientRect()
+        const start = {x: e.x - x, y: e.y - y}
+        this.triggerEvent("beforeDraw", stroke, id)
 
+        const down = (e) => {
+            const {x, y} = this._writeBoard.getBoundingClientRect()
+            const end = {x: e.x - x, y: e.y - y}
+            this.addTriangle(id, start, end)
+        }
+        down(e)
+        const up = () => {
+            this._writeBoard.removeEventListener("pointermove", down)
+            this._writeBoard.removeEventListener("pointerup", up)
+            this._writeBoard.removeEventListener("pointerleave", up)
+            this.triggerEvent("afterDraw", stroke, id)
+        }
+        this._writeBoard.addEventListener("pointermove", down)
+        this._writeBoard.addEventListener("pointerup", up)
+        this._writeBoard.addEventListener("pointerleave", up)
     }
 
     addBorder(border) {
@@ -300,6 +320,14 @@ export class Board {
         const stroke = this._strokeManager.getById(id)
         if (stroke) {
             stroke.addCircular(new Point(start.x, start.y), new Point(end.x, end.y))
+            this.triggerEvent("pointChanged", {start, end})
+        }
+    }
+
+    addTriangle(id, start, end) {
+        const stroke = this._strokeManager.getById(id)
+        if (stroke) {
+            stroke.addTriangle(new Point(start.x, start.y), new Point(end.x, end.y))
             this.triggerEvent("pointChanged", {start, end})
         }
     }

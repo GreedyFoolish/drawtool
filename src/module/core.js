@@ -111,4 +111,28 @@ export class Core {
                 />`
     }
 
+    static getTrianglePathFromStroke(stroke, start, end) {
+        const {_config} = stroke
+        const startX = parseFloat(start._x.toFixed(2))
+        const startY = parseFloat(start._y.toFixed(2))
+        const endX = parseFloat(end._x.toFixed(2))
+        const endY = parseFloat(end._y.toFixed(2))
+        const midX = parseFloat(((startX + endX) / 2).toFixed(2))
+        const midY = parseFloat(((startY + endY) / 2).toFixed(2))
+        const disX = parseFloat((Math.abs(startX - endX) / 2).toFixed(2))
+        const disY = parseFloat((Math.abs(startY - endY) / 2).toFixed(2))
+        const path = `M ${startX} ${endY}
+                      L ${endX} ${endY}
+                      L ${midX} ${startY} Z`
+        return `<path d="${path}"
+                    fill="none"
+                    data-id="${stroke._id}"
+                    stroke="${_config?.color ?? '#000'}"
+                    stroke-width="${_config?.borderWidth ?? 3}"
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                />`
+    }
+
+
 }

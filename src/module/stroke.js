@@ -123,6 +123,13 @@ export class Stroke {
         this._g.innerHTML = Core.getCircularPathFromStroke(this, start, end)
     }
 
+    addTriangle(start, end) {
+        if (start.constructor !== Point || end.constructor !== Point) {
+            console.warn("The endpoint types at both ends of the circular are wrong")
+        }
+        this._g.innerHTML = Core.getTrianglePathFromStroke(this, start, end)
+    }
+
     /**
      * 将当前笔画的笔画管理对象绑定为传入的笔画管理对象
      * @param strokeManager 传入的笔画管理对象
