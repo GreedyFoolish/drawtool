@@ -93,10 +93,14 @@ export class Core {
         const disX = parseFloat((Math.abs(startX - endX) / 2).toFixed(2))
         const disY = parseFloat((Math.abs(startY - endY) / 2).toFixed(2))
         const radius = Math.sqrt(disX * disX, disY * disY)
-
+        // 此为画椭圆参数
         const path = `M ${midX} ${midY} m ${-1 * radius} 0
-                      a ${radius} ${radius} 0 1 0 ${radius * 2} 0
-                      a ${radius} ${radius} 0 1 0 ${radius * -2} 0`
+                      a ${disX} ${disY} 0 1 0 ${disX * 2} 0
+                      a ${disX} ${disY} 0 1 0 ${disX * -2} 0`
+        // 此为画圆参数
+        // const path = `M ${midX} ${midY} m ${-1 * radius} 0
+        //               a ${radius} ${radius} 0 1 0 ${radius * 2} 0
+        //               a ${radius} ${radius} 0 1 0 ${radius * -2} 0`
         return `<path d="${path}"
                     fill="none"
                     data-id="${stroke._id}"
