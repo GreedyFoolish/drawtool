@@ -13,7 +13,9 @@ export class Stroke {
         {
             set: (target, key, newValue, receiver) => {
                 const r = Reflect.set(target, key, newValue, receiver)
-                this._g.setAttribute("transform", `translate(${target.x},${target.y})`)
+                const _content = this._strokeManager._board._content
+                const zoom = _content?.getAttribute('data-zoom') ? _content?.getAttribute('data-zoom') : 1
+                this._g.setAttribute("transform", `translate(${target.x / zoom},${target.y / zoom})`)
                 return r
             }
         }

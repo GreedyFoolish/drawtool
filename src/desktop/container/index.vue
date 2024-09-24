@@ -18,6 +18,7 @@ const backgroundContainer = ref()
 
 const getBackgroundImageStyle = () => {
   return `
+    zoom: ${getSettingStore.zoomInfo.zoom};
     width: ${getSettingStore.backgroundSetting.width}px;
     height: ${getSettingStore.backgroundSetting.height}px;
     background-image: url(${getSettingStore.backgroundImageURL});

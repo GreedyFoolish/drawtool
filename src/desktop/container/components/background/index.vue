@@ -1,7 +1,7 @@
 <template>
   <div id="backgroundContainer" class="backgroundContainer" ref="backgroundContainer">
     <!-- 装饰图容器 -->
-    <div class="decorativeContainer">
+    <div class="decorativeContainer" @wheel="(e)=>defaultWheel(e)">
       <Decorative v-for="(item,key) in getSettingStore.decorativeImageList"
                   :key="key"
                   :item="item"
@@ -18,6 +18,23 @@ import {settingStore} from "@/stores/drawer.js";
 
 const getSettingStore = settingStore()
 const backgroundContainer = ref()
+const defaultWheel = (e) => {
+  if (e.ctrlKey) {
+    e.stopPropagation();
+    e.preventDefault();
+    let magnification = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+    const tempZoom = getSettingStore.zoomInfo.zoom * magnification;
+    const min = getSettingStore.zoomInfo.min, max = getSettingStore.zoomInfo.max;
+    magnification = Math.max(Math.min(max, tempZoom), min) / getSettingStore.zoomInfo.zoom;
+    const offsetY = e.pageY - backgroundContainer.value.getBoundingClientRect().top;
+    const offsetX = e.pageX - backgroundContainer.value.getBoundingClientRect().left;
+    getSettingStore.zoomInfo.offsetY = (offsetY + backgroundContainer.value.scrollTop) * magnification - offsetY;
+    getSettingStore.zoomInfo.offsetX = (offsetX + backgroundContainer.value.scrollLeft) * magnification - offsetX;
+    getSettingStore.zoomInfo.zoom = Math.max(Math.min(max, tempZoom), min);
+    console.log(getSettingStore.zoomInfo)
+  }
+};
+
 const getPageIns = () => {
   return backgroundContainer.value
 }

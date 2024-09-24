@@ -1,5 +1,5 @@
 <template>
-  <div id="drawBoard"></div>
+  <div id="drawBoard" :data-zoom="getSettingStore.zoomInfo.zoom"></div>
 </template>
 
 <script setup>

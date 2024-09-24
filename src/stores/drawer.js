@@ -11,6 +11,13 @@ export const settingStore = defineStore("settingStore", {
             width: 400,
             height: 300,
         },
+        zoomInfo: {
+            max: 2,
+            min: 0.5,
+            zoom: 1,
+            offsetX: 0,
+            offsetY: 0,
+        },
         selectTool: "arrow",
         drawMode: "arrow",
         toolbarConfig: {}
