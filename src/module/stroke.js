@@ -21,7 +21,10 @@ export class Stroke {
         }
     )
 
-    constructor(config, points) {
+    constructor(config, points, id) {
+        if (id) {
+            this._id = id
+        }
         this._config = JSON.parse(JSON.stringify({...this._config, ...config}))
         this.reDraw()
         this.add(points)
@@ -115,6 +118,7 @@ export class Stroke {
         if (start.constructor !== Point || end.constructor !== Point) {
             console.warn("The endpoint types at both ends of the line are wrong")
         }
+        this._points = [start, end]
         this._g.innerHTML = Core.getLinePathFromStroke(this, start, end)
     }
 
@@ -122,6 +126,7 @@ export class Stroke {
         if (start.constructor !== Point || end.constructor !== Point) {
             console.warn("The endpoint types at both ends of the circular are wrong")
         }
+        this._points = [start, end]
         this._g.innerHTML = Core.getCircularPathFromStroke(this, start, end)
     }
 
@@ -129,6 +134,7 @@ export class Stroke {
         if (start.constructor !== Point || end.constructor !== Point) {
             console.warn("The endpoint types at both ends of the circular are wrong")
         }
+        this._points = [start, end]
         this._g.innerHTML = Core.getTrianglePathFromStroke(this, start, end)
     }
 

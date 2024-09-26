@@ -183,7 +183,7 @@ export class Board {
             this._writeBoard.removeEventListener("pointermove", down)
             this._writeBoard.removeEventListener("pointerup", up)
             this._writeBoard.removeEventListener("pointerleave", up)
-            this.triggerEvent("afterDraw", stroke, id)
+            this.triggerEvent("afterDraw", stroke, id, "draw")
         }
         this._writeBoard.addEventListener("pointermove", down)
         this._writeBoard.addEventListener("pointerup", up)
@@ -202,7 +202,8 @@ export class Board {
                 fontSize: 30,
             },
         )
-        this._textareaManager.add(textarea)
+        const id = this._textareaManager.add(textarea)
+        this.triggerEvent("afterDraw", textarea, id, "word")
     }
 
     straight(e) {
@@ -229,7 +230,7 @@ export class Board {
             this._writeBoard.removeEventListener("pointermove", down)
             this._writeBoard.removeEventListener("pointerup", up)
             this._writeBoard.removeEventListener("pointerleave", up)
-            this.triggerEvent("afterDraw", stroke, id)
+            this.triggerEvent("afterDraw", stroke, id, "straight")
         }
         this._writeBoard.addEventListener("pointermove", down)
         this._writeBoard.addEventListener("pointerup", up)
@@ -260,7 +261,7 @@ export class Board {
             this._writeBoard.removeEventListener("pointermove", down)
             this._writeBoard.removeEventListener("pointerup", up)
             this._writeBoard.removeEventListener("pointerleave", up)
-            this.triggerEvent("afterDraw", stroke, id)
+            this.triggerEvent("afterDraw", stroke, id, "circular")
         }
         this._writeBoard.addEventListener("pointermove", down)
         this._writeBoard.addEventListener("pointerup", up)
@@ -291,7 +292,7 @@ export class Board {
             this._writeBoard.removeEventListener("pointermove", down)
             this._writeBoard.removeEventListener("pointerup", up)
             this._writeBoard.removeEventListener("pointerleave", up)
-            this.triggerEvent("afterDraw", stroke, id)
+            this.triggerEvent("afterDraw", stroke, id, "triangle")
         }
         this._writeBoard.addEventListener("pointermove", down)
         this._writeBoard.addEventListener("pointerup", up)

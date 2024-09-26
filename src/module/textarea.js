@@ -28,7 +28,11 @@ export class Textarea {
         }
     )
 
-    constructor(board, config, textValue) {
+    constructor(board, config, textValue, id) {
+        if (id) {
+            this._id = id
+        }
+        // this._textarea.classList.add(this._id)
         this._board = board
         this.setConfig(config)
         this._textValue = textValue
@@ -57,7 +61,7 @@ export class Textarea {
         // 文本框失去焦点事件
         this._textarea.addEventListener("blur", (e) => {
             const {x, y, fontFamily, fontSize, rows, cols} = this._config
-            const value = e.target.value
+            const value = this._textValue ?? e.target.value
             const wordList = value.split("\n")
             let resWord = ""
             // 统计一行写了超出一行文本的行数
@@ -86,12 +90,22 @@ export class Textarea {
             }
             if (value === "") {
                 this._g.id = this._id
+                this._textarea.style.display = "none"
+                // const textarea = document.getElementsByClassName(this._id)
+                // console.log(this._id,textarea)
+                // for (const item of textarea) {
+                //     this._board._writeBoard.removeChild(item)
+                // }
             } else {
                 this._g.id = this._id
                 this._g.innerHTML = `<text font-family="${fontFamily}" font-size="${fontSize}">${resWord}</text>`
                 this._board._strokeManager._svg.append(this._g)
-                // this._textarea.style.display = "none"
+                this._textarea.style.display = "none"
                 this._textarea.remove()
+                // const textarea = document.getElementsByClassName(this._id)
+                // for (const item of textarea) {
+                //     this._board._writeBoard.removeChild(item)
+                // }
                 this._textValue = value
             }
         })
@@ -127,6 +141,11 @@ export class Textarea {
         this._g.addEventListener("blur", (e) => {
             this._board.addBorder()
         })
+        // 若是反撤销操作，则需要触发失焦事件
+        if (this._textValue) {
+            const event = new Event("blur")
+            this._textarea.dispatchEvent(event)
+        }
     }
 
     /**

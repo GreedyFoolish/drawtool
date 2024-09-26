@@ -6,18 +6,19 @@
                   :key="key"
                   :item="item"
       ></Decorative>
-      <WriteBoard></WriteBoard>
+      <WriteBoard ref="writeBoardIns"></WriteBoard>
     </div>
   </div>
 </template>
 <script setup>
 import Decorative from "@/desktop/container/components/decorative/index.vue";
 import WriteBoard from "@/desktop/container/components/writeBoard/index.vue";
-import {defineExpose, ref, watch} from "vue";
+import {defineExpose, onMounted, ref} from "vue";
 import {settingStore} from "@/stores/drawer.js";
 
 const getSettingStore = settingStore()
 const backgroundContainer = ref()
+const writeBoardIns = ref()
 const defaultWheel = (e) => {
   if (e.ctrlKey) {
     e.stopPropagation();
@@ -42,8 +43,9 @@ const getRect = () => {
   return backgroundContainer.value.getBoundingClientRect()
 }
 
-// onMounted(() => {
-// })
+onMounted(() => {
+  getSettingStore.writeBoardIns = writeBoardIns.value
+})
 
 defineExpose({
   getPageIns,

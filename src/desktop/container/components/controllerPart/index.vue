@@ -7,17 +7,32 @@
                  :min="getSettingStore.zoomInfo.min*100" :max="getSettingStore.zoomInfo.max*100"
                  @change="zoom=>getSettingStore.zoomInfo.zoom=zoom/100">
     </NumberInput>
+    <div class="slider"></div>
+    <div class="label">
+      {{ $getLangText("撤销重做") }}:
+    </div>
+    <ButtonGroup :buttons="actionButtons"></ButtonGroup>
   </div>
 </template>
 
 <script setup>
 import NumberInput from "@/desktop/container/components/controllerPart/components/numberInput.vue";
 import ButtonGroup from "@/desktop/container/components/controllerPart/components/buttonGroup.vue";
-import nextIcon from "@/assets/icon/next.svg";
 import lastIcon from "@/assets/icon/last.svg";
+import nextIcon from "@/assets/icon/next.svg";
 import {settingStore} from "@/stores/drawer.js";
 
 const getSettingStore = settingStore()
+
+const actionButtons = [{
+  "type": "lastStep",
+  "text": "撤销",
+  "icon": lastIcon,
+}, {
+  "type": "nextStep",
+  "text": "反撤销",
+  "icon": nextIcon,
+}]
 </script>
 
 <style scoped lang="stylus">
