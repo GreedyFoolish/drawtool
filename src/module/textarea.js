@@ -32,7 +32,6 @@ export class Textarea {
         if (id) {
             this._id = id
         }
-        // this._textarea.classList.add(this._id)
         this._board = board
         this.setConfig(config)
         this._textValue = textValue
@@ -60,54 +59,7 @@ export class Textarea {
     addEvent() {
         // 文本框失去焦点事件
         this._textarea.addEventListener("blur", (e) => {
-            const {x, y, fontFamily, fontSize, rows, cols} = this._config
-            const value = this._textValue ?? e.target.value
-            const wordList = value.split("\n")
-            let resWord = ""
-            // 统计一行写了超出一行文本的行数
-            let cntRow = 0
-            for (let i = 0; i < wordList.length; i++) {
-                const curWord = wordList[i]
-                if (curWord) {
-                    // 基本行高（4/3字体大小）
-                    const baseY = parseFloat((fontSize * 4 / 3).toFixed(2))
-                    // 上浮高度
-                    const floatY = parseFloat((fontSize / 4).toFixed(2))
-                    if (curWord.length > cols) {
-                        const row = Math.ceil(curWord.length / cols)
-                        for (let j = 0; j < row; j++) {
-                            const txt = curWord.slice(j * cols, (j + 1) * cols)
-                            const posY = parseFloat(y) + (i + 1 + cntRow + j) * baseY - floatY
-                            resWord += `<tspan x="${x}" y="${posY}">${txt}</tspan>`
-                        }
-                        // 统计多出来的行数
-                        cntRow += row - 1
-                    } else {
-                        const posY = parseFloat(y) + (i + 1 + cntRow) * baseY - floatY
-                        resWord += `<tspan x="${x}" y="${posY}">${curWord}</tspan>`
-                    }
-                }
-            }
-            if (value === "") {
-                this._g.id = this._id
-                this._textarea.style.display = "none"
-                // const textarea = document.getElementsByClassName(this._id)
-                // console.log(this._id,textarea)
-                // for (const item of textarea) {
-                //     this._board._writeBoard.removeChild(item)
-                // }
-            } else {
-                this._g.id = this._id
-                this._g.innerHTML = `<text font-family="${fontFamily}" font-size="${fontSize}">${resWord}</text>`
-                this._board._strokeManager._svg.append(this._g)
-                this._textarea.style.display = "none"
-                this._textarea.remove()
-                // const textarea = document.getElementsByClassName(this._id)
-                // for (const item of textarea) {
-                //     this._board._writeBoard.removeChild(item)
-                // }
-                this._textValue = value
-            }
+            this.textarea2Text(e)
         })
         // 文本鼠标拖动事件
         this._g.addEventListener("mousedown", (e) => {
@@ -141,10 +93,54 @@ export class Textarea {
         this._g.addEventListener("blur", (e) => {
             this._board.addBorder()
         })
-        // 若是反撤销操作，则需要触发失焦事件
+        // 若是反撤销操作，则需要触发文本框转文本事件函数
         if (this._textValue) {
-            const event = new Event("blur")
-            this._textarea.dispatchEvent(event)
+            this.textarea2Text()
+        }
+    }
+
+    /**
+     * 文本框转文本事件函数
+     * @param e 事件事件对象
+     */
+    textarea2Text(e) {
+        const {x, y, fontFamily, fontSize, rows, cols} = this._config
+        const value = this._textValue ?? e.target.value
+        const wordList = value.split("\n")
+        let resWord = ""
+        // 统计一行写了超出一行文本的行数
+        let cntRow = 0
+        for (let i = 0; i < wordList.length; i++) {
+            const curWord = wordList[i]
+            if (curWord) {
+                // 基本行高（4/3字体大小）
+                const baseY = parseFloat((fontSize * 4 / 3).toFixed(2))
+                // 上浮高度
+                const floatY = parseFloat((fontSize / 4).toFixed(2))
+                if (curWord.length > cols) {
+                    const row = Math.ceil(curWord.length / cols)
+                    for (let j = 0; j < row; j++) {
+                        const txt = curWord.slice(j * cols, (j + 1) * cols)
+                        const posY = parseFloat(y) + (i + 1 + cntRow + j) * baseY - floatY
+                        resWord += `<tspan x="${x}" y="${posY}">${txt}</tspan>`
+                    }
+                    // 统计多出来的行数
+                    cntRow += row - 1
+                } else {
+                    const posY = parseFloat(y) + (i + 1 + cntRow) * baseY - floatY
+                    resWord += `<tspan x="${x}" y="${posY}">${curWord}</tspan>`
+                }
+            }
+        }
+        if (value === "") {
+            this._g.id = this._id
+        } else {
+            this._g.id = this._id
+            this._g.innerHTML = `<text font-family="${fontFamily}" font-size="${fontSize}">${resWord}</text>`
+            this._board._strokeManager._svg.append(this._g)
+            this._textarea.remove()
+            this._textValue = value
+            this._board.triggerEvent("removeTextarea", this._id)
         }
     }
 
@@ -180,6 +176,7 @@ export class Textarea {
     mount(contain) {
         this._contain = contain
         this._contain.append(this._textarea)
+        this._board.triggerEvent("addTextarea", this._id)
     }
 
     unMount() {

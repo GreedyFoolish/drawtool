@@ -17,7 +17,9 @@ export class Board {
         pointChanged: {},
         modeChange: {},
         contentChange: {},
-        drawConfigChange: {}
+        drawConfigChange: {},
+        addTextarea: {},
+        removeTextarea: {}
     }
     _parent = document.createElement("div")
     _writeBoard = document.createElement("div")
@@ -202,7 +204,7 @@ export class Board {
                 fontSize: 30,
             },
         )
-        const id = this._textareaManager.add(textarea)
+        const id = this._textareaManager.add(textarea, "create")
         this.triggerEvent("afterDraw", textarea, id, "word")
     }
 

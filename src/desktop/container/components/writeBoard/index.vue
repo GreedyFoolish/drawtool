@@ -28,7 +28,6 @@ const config = ref({
     {
       eventName: 'afterDraw',
       fn: (svg, id, type) => {
-        console.log("afterDraw", svg, id)
         if (id) {
           getSettingStore.actionStepper.addAction({
             type: "drawChange",
@@ -42,14 +41,26 @@ const config = ref({
     //   fn: ({point}) => {
     //     console.log("point", point)
     //   }
-    // }
+    // },
+    {
+      eventName: 'addTextarea',
+      fn: (id) => {
+        getSettingStore.actionStepper.lock = true
+        getSettingStore.actionStepper.checkAction()
+      }
+    },
+    {
+      eventName: 'removeTextarea',
+      fn: (id) => {
+        getSettingStore.actionStepper.lock = false
+        getSettingStore.actionStepper.checkAction()
+      }
+    }
   ],
 })
 
 const setPageAction = (data, type) => {
-  console.log(data)
   if (type === "last") {
-    console.log(data)
     if (data.type === "word") {
       board._textareaManager.remove(data.svg)
     } else {
@@ -63,7 +74,7 @@ const setPageAction = (data, type) => {
         break
       case "word":
         const word = new Textarea(board, {...data.svg._config}, data.svg._textValue, data.svg._id)
-        board._textareaManager.add(word)
+        board._textareaManager.add(word, "revoke")
         break
       case "straight":
         const straight = new Stroke({...data.svg._config}, data.svg._points, data.svg._id)

@@ -23,9 +23,10 @@ export class TextareaManager {
     /**
      * 根据传入文本类型，进行文本添加操作
      * @param textarea 传入文本
+     * @param type 文本添加类型（1、create：创建 2、revoke：撤销）
      * @returns {*}
      */
-    add(textarea) {
+    add(textarea, type) {
         let undefinedCnt = 0
         for (const [id, item] of this._map) {
             if (item._textValue === undefined) {
@@ -37,16 +38,18 @@ export class TextareaManager {
             return
         }
         if (textarea.constructor === Textarea) {
-            return this.addTextarea(textarea)
+            return this.addTextarea(textarea, type)
         } else {
             throw new Error("textarea type error")
         }
     }
 
-    addTextarea(textarea) {
+    addTextarea(textarea, type) {
         const id = textarea.bind(this)
         this._map.set(id, textarea)
-        this.loadTextarea(textarea)
+        if (type === "create") {
+            this.loadTextarea(textarea)
+        }
         return id;
     }
 

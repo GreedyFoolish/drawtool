@@ -2,6 +2,7 @@ import {settingStore} from "@/stores/drawer.js";
 
 // 撤销/反撤销实现类
 export class DrawActionStepper {
+    lock = false;
     step = 0;
     actions = [];
     // 恢复操作实现
@@ -55,12 +56,12 @@ export class DrawActionStepper {
 
     // 判断是否可以上一步
     notAllowLast() {
-        return this.step <= 0;
+        return this.lock || this.step <= 0;
     }
 
     // 判断是否可以下一步
     notAllowNext() {
-        return this.actions.length === this.step;
+        return this.lock || this.actions.length === this.step;
     }
 }
 
