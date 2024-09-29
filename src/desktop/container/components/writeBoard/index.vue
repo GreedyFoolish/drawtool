@@ -55,42 +55,76 @@ const config = ref({
         getSettingStore.actionStepper.lock = false
         getSettingStore.actionStepper.checkAction()
       }
+    },
+    {
+      eventName: 'eraserChange',
+      fn: (strokes, textareaList) => {
+        for (const item of strokes) {
+          const id = item._id
+          getSettingStore.actionStepper.addAction({
+            type: "drawChange",
+            data: {id, svg: item, type: "eraser"}
+          })
+        }
+        for (const item of textareaList) {
+          const id = item._id
+          getSettingStore.actionStepper.addAction({
+            type: "drawChange",
+            data: {id, svg: item, type: "eraser"}
+          })
+        }
+      }
     }
   ],
 })
+
+const revoke = (data) => {
+  switch (data.type) {
+    case "draw":
+      const draw = new Stroke({...data.svg._config}, data.svg._points, data.svg._id)
+      board._strokeManager.add(draw)
+      break
+    case "word":
+      const word = new Textarea(board, {...data.svg._config}, data.svg._textValue, data.svg._id)
+      board._textareaManager.add(word, "revoke")
+      break
+    case "straight":
+      const straight = new Stroke({...data.svg._config}, [], data.svg._id)
+      board._strokeManager.add(straight)
+      straight.addLine(data.svg._points[0], data.svg._points[1])
+      break
+    case "circular":
+      const circular = new Stroke({...data.svg._config}, [], data.svg._id)
+      board._strokeManager.add(circular)
+      circular.addCircular(data.svg._points[0], data.svg._points[1])
+      break
+    case "triangle":
+      const triangle = new Stroke({...data.svg._config}, [], data.svg._id)
+      board._strokeManager.add(triangle)
+      triangle.addTriangle(data.svg._points[0], data.svg._points[1])
+      break
+    case "eraser":
+      if (data.svg._type === "word") {
+        board._textareaManager.remove(data.svg)
+      } else {
+        board._strokeManager.remove(data.svg)
+      }
+      break
+  }
+}
 
 const setPageAction = (data, type) => {
   if (type === "last") {
     if (data.type === "word") {
       board._textareaManager.remove(data.svg)
+    } else if (data.type === "eraser") {
+      const drawType = data.svg._type
+      revoke({...data, type: drawType})
     } else {
       board._strokeManager.remove(data.svg)
     }
   } else {
-    switch (data.type) {
-      case "draw":
-        const draw = new Stroke({...data.svg._config}, data.svg._points, data.svg._id)
-        board._strokeManager.add(draw)
-        break
-      case "word":
-        const word = new Textarea(board, {...data.svg._config}, data.svg._textValue, data.svg._id)
-        board._textareaManager.add(word, "revoke")
-        break
-      case "straight":
-        const straight = new Stroke({...data.svg._config}, data.svg._points, data.svg._id)
-        board._strokeManager.add(straight)
-        break
-      case "circular":
-        const circular = new Stroke({...data.svg._config}, [], data.svg._id)
-        board._strokeManager.add(circular)
-        circular.addCircular(data.svg._points[0], data.svg._points[1])
-        break
-      case "triangle":
-        const triangle = new Stroke({...data.svg._config}, [], data.svg._id)
-        board._strokeManager.add(triangle)
-        triangle.addTriangle(data.svg._points[0], data.svg._points[1])
-        break
-    }
+    revoke(data)
   }
 }
 

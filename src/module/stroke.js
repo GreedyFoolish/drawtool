@@ -5,6 +5,7 @@ export class Stroke {
     _config
     _contain
     _strokeManager
+    _type = "draw"
     _points = []
     _id = Core.uuid()
     _g = document.createElementNS("http://www.w3.org/2000/svg", "g")
@@ -29,6 +30,7 @@ export class Stroke {
         this.reDraw()
         this.add(points)
         this.addEvent()
+        this._type = "draw"
     }
 
     /**
@@ -120,6 +122,7 @@ export class Stroke {
         }
         this._points = [start, end]
         this._g.innerHTML = Core.getLinePathFromStroke(this, start, end)
+        this._type = "straight"
     }
 
     addCircular(start, end) {
@@ -128,6 +131,7 @@ export class Stroke {
         }
         this._points = [start, end]
         this._g.innerHTML = Core.getCircularPathFromStroke(this, start, end)
+        this._type = "circular"
     }
 
     addTriangle(start, end) {
@@ -136,6 +140,7 @@ export class Stroke {
         }
         this._points = [start, end]
         this._g.innerHTML = Core.getTrianglePathFromStroke(this, start, end)
+        this._type = "triangle"
     }
 
     /**

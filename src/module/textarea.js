@@ -12,6 +12,7 @@ export class Textarea {
     _contain
     _textareaManager
     _textValue
+    _type = "word"
     _id = Core.uuid()
     _textarea = document.createElement("textarea")
     _g = document.createElementNS("http://www.w3.org/2000/svg", "g")
@@ -36,6 +37,7 @@ export class Textarea {
         this.setConfig(config)
         this._textValue = textValue
         this.addEvent()
+        this._type = "word"
         return this
     }
 

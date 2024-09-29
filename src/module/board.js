@@ -19,7 +19,8 @@ export class Board {
         contentChange: {},
         drawConfigChange: {},
         addTextarea: {},
-        removeTextarea: {}
+        removeTextarea: {},
+        eraserChange: {}
     }
     _parent = document.createElement("div")
     _writeBoard = document.createElement("div")
@@ -343,6 +344,7 @@ export class Board {
         for (const textarea of textareaList) {
             this._textareaManager.remove(textarea)
         }
+        this.triggerEvent("eraserChange", strokes, textareaList)
         return this
     }
 
