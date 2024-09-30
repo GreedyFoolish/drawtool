@@ -14,9 +14,44 @@ let board = null
 const config = ref({
   mode: "arrow",
   drawConfig: {
-    size: 10,
-    color: "red",
-    borderWidth: 5,
+    // 压力参数详见： https://github.com/steveruizok/perfect-freehand
+    // 笔画的直径，默认值 8
+    size: 8,
+    // 压力对笔画大小的影响，默认值 0.5
+    thinning: 0.9,
+    // 笔画柔化描边的程度，默认值 0.5
+    smoothing: 1,
+    // 笔画简化的程度，默认值 0.5
+    streamline: 0.5,
+    // 是否根据速度模拟压力，默认值 true
+    simulatePressure: true,
+    // 应用于每个点的压力的缓动函数
+    easing: (t) => t,
+    // 线起点的笔锋选项
+    start: {
+      // 是否绘制笔锋，默认值 true
+      cap: true,
+      // 到锥度的距离。如果设置为 true，则 taper 将是笔触的总长度，默认值 0
+      taper: 20,
+      // 笔锋过渡效果
+      easing: (t) => t,
+    },
+    // 线尾的笔锋选项
+    end: {
+      cap: true,
+      taper: 20,
+      easing: (t) => t,
+    },
+    // 描边是否完整
+    last: true,
+    // 笔画颜色，默认值 #f00
+    color: "#f00",
+    // 笔画边框颜色，默认值 #000
+    borderColor: "#000",
+    // 笔画边框宽度，默认值 1
+    borderWidth: 1,
+    // 笔画边透明度，默认值 1
+    borderOpacity: 1,
   },
   event: [
     // {

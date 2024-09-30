@@ -37,7 +37,8 @@ export class Stroke {
      * 调用 Core 的 getPathFromStroke 方法，对笔画进行重新绘制
      */
     reDraw() {
-        this._g.innerHTML = Core.getPathFromStroke(this)
+        // this._g.innerHTML = Core.getPathFromStroke(this)
+        this._g.innerHTML = Core.getPressurePathFromStroke(this)
     }
 
     /**

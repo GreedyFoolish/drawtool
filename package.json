@@ -15,7 +15,9 @@
     "@vitejs/plugin-vue": "^5.0.5",
     "element-plus": "^2.7.6",
     "html2canvas": "^1.4.1",
+    "perfect-freehand": "^1.2.2",
     "pinia": "^2.1.7",
+    "polygon-clipping": "^0.15.7",
     "stylus": "^0.63.0",
     "vue": "^3.4.30"
   }

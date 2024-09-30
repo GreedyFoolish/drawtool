@@ -1,4 +1,11 @@
+import {PointPressure} from "./point-pressure.js"
+import {getStroke} from "perfect-freehand";
+import polygonClipping from "polygon-clipping";
 export class Core {
+    static average(a, b) {
+        return (+a + +b) / 2
+    }
+
     /**
      * 生成 uuid
      * @returns {string} uuid
@@ -46,6 +53,85 @@ export class Core {
         for (let i = 1; i < len; i++) {
             a = points[i]
             result += `L ${a._x.toFixed(2)},${a._y.toFixed(2)} `
+        }
+        // 是否闭合图形
+        if (closed) {
+            result += "Z"
+        }
+        return result
+    }
+
+    /**
+     * 将传入的点阵转换为有压感的点阵
+     * @param points 传入的点阵
+     * @returns {[]}
+     */
+    static point2pointPressure(points) {
+        const pointPressureList = []
+        points.forEach(item => {
+            pointPressureList.push(new PointPressure(item._x, item._y, 0.5))
+        })
+        return pointPressureList
+    }
+
+    /**
+     * 根据传入的笔画信息，生成 svg 对象的 path 标签
+     * @param stroke 传入的笔画信息
+     * @returns {string} svg 对象的 path 标签
+     */
+    static getPressurePathFromStroke(stroke) {
+        const {_config} = stroke
+        const pressurePoint = Core.point2pointPressure(stroke._points)
+        const points = getStroke(pressurePoint, _config)
+        const path = this.getSvgPressurePathFromStroke(points)
+        return `<path d="${path}"
+                    fill="${_config?.color}"
+                    data-id="${stroke._id}"
+                    stroke="${_config?.color ?? '#000'}"
+                    stroke-width="${_config?.borderWidth ?? 1}"
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                />
+                 <path d="${path}" 
+                    stroke-opacity="${_config?.borderOpacity ?? _config?.opacity ?? 1}" 
+                    fill="transparent" 
+                    stroke="${_config?.borderColor ?? '#000'}" 
+                    data-id="${stroke.id}"
+                    stroke-width="${_config?.borderWidth ?? 0}" 
+                    stroke-linejoin="round" 
+                    stroke-linecap="round"
+                    pointer-events="all"
+                    />`
+    }
+
+    static getFlatSvgPathFromStroke(stroke) {
+        return polygonClipping.union([stroke]).map((face) =>
+            face.map((points) => {
+                return Core.getSvgPressurePathFromStroke(points)
+            }).join(' ')
+        ).join(' ')
+    }
+
+    /**
+     * 根据传入点的集合，生成 path 标签的路径命令
+     * @param points 传入点的集合
+     * @param closed 是否闭合
+     * @returns {string} 路径命令
+     */
+    static getSvgPressurePathFromStroke(points, closed = false) {
+        const len = points.length
+        if (len < 4) {
+            return ""
+        }
+        let a = points[0]
+        let b = points[1]
+        const c = points[2]
+        let result = `M${a[0]},${a[1]} Q${b[0]},${b[1]} ${Core.average(b[0], c[0])},${Core.average(b[1], c[1])} T `
+
+        for (let i = 2; i < (len - 1); i++) {
+            a = points[i]
+            b = points[i + 1]
+            result += `${Core.average(a[0], b[0])},${Core.average(a[1], b[1])} `
         }
         // 是否闭合图形
         if (closed) {
