@@ -69,7 +69,7 @@ export class Core {
     static point2pointPressure(points) {
         const pointPressureList = []
         points.forEach(item => {
-            pointPressureList.push(new PointPressure(item._x, item._y, 0.5))
+            pointPressureList.push(new PointPressure(item._x, item._y, item._pressure))
         })
         return pointPressureList
     }

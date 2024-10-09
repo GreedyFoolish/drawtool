@@ -178,7 +178,8 @@ export class Board {
             const zoom = this._content?.getAttribute('data-zoom') ? this._content?.getAttribute('data-zoom') : 1
             this.addPoint(id, {
                 x: this.getZoomPoint(e.x, x, zoom),
-                y: this.getZoomPoint(e.y, y, zoom)
+                y: this.getZoomPoint(e.y, y, zoom),
+                pressure: e.pressure
             })
         }
         down(e)
@@ -315,15 +316,16 @@ export class Board {
     }
 
     /**
-     * 根据传入 id 和 坐标{x, y} 添加点并重新绘制笔画
+     * 根据传入 id 和 坐标{x, y, pressure} 添加点并重新绘制笔画
      * @param id 传入 id
      * @param x 传入 坐标 x
      * @param y 传入 坐标 y
+     * @param pressure 压力值 pressure
      */
-    addPoint(id, {x, y}) {
+    addPoint(id, {x, y, pressure}) {
         const stroke = this._strokeManager.getById(id)
         if (stroke) {
-            const point = new Point(x, y)
+            const point = new Point(x, y, pressure)
             stroke.add(point)
             this.triggerEvent("pointChanged", {point})
             stroke.reDraw()
