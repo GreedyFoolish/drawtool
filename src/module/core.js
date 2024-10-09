@@ -1,6 +1,6 @@
 import {PointPressure} from "./point-pressure.js"
 import {getStroke} from "perfect-freehand";
-import polygonClipping from "polygon-clipping";
+
 export class Core {
     static average(a, b) {
         return (+a + +b) / 2
@@ -85,31 +85,24 @@ export class Core {
         const points = getStroke(pressurePoint, _config)
         const path = this.getSvgPressurePathFromStroke(points)
         return `<path d="${path}"
-                    fill="${_config?.color}"
-                    data-id="${stroke._id}"
-                    stroke="${_config?.color ?? '#000'}"
-                    stroke-width="${_config?.borderWidth ?? 1}"
+                    fill="${_config?.borderColor ?? '#000'}"
+                    data-id="${stroke.id}"
+                    stroke="${_config?.borderColor ?? '#000'}"
+                    stroke-opacity="${_config?.borderOpacity ?? 1}"
+                    stroke-width="${_config?.borderWidth ?? 2}"
                     stroke-linejoin="round"
                     stroke-linecap="round"
-                />
-                 <path d="${path}" 
-                    stroke-opacity="${_config?.borderOpacity ?? _config?.opacity ?? 1}" 
-                    fill="transparent" 
-                    stroke="${_config?.borderColor ?? '#000'}" 
-                    data-id="${stroke.id}"
-                    stroke-width="${_config?.borderWidth ?? 0}" 
-                    stroke-linejoin="round" 
+                    pointer-events="all"
+                 />
+                 <path d="${path}"
+                    fill="${_config?.color ?? '#f00'}"
+                    data-id="${stroke._id}"
+                    stroke="${_config?.color ?? '#f00'}"
+                    stroke-width="0"
+                    stroke-linejoin="round"
                     stroke-linecap="round"
                     pointer-events="all"
-                    />`
-    }
-
-    static getFlatSvgPathFromStroke(stroke) {
-        return polygonClipping.union([stroke]).map((face) =>
-            face.map((points) => {
-                return Core.getSvgPressurePathFromStroke(points)
-            }).join(' ')
-        ).join(' ')
+                 />`
     }
 
     /**
@@ -149,7 +142,7 @@ export class Core {
      */
     static getLinePathFromStroke(stroke, start, end) {
         const {_config} = stroke
-        const path = `M ${start._x.toFixed(2)},${start._y.toFixed(2)} 
+        const path = `M ${start._x.toFixed(2)},${start._y.toFixed(2)}
                       L${end._x.toFixed(2)},${end._y.toFixed(2)}`
         return `<path d="${path}"
                     fill="none"
