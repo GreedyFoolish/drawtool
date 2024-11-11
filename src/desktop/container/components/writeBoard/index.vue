@@ -165,6 +165,10 @@ const setPageAction = (data, type) => {
   }
 }
 
+const getWriteBoardData = () => {
+  return board.getImageInfo()
+}
+
 watch(() => getSettingStore.drawMode, (curMode, oldMode) => {
   if (board) {
     // console.log(curMode, oldMode)

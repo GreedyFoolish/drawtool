@@ -385,4 +385,8 @@ export class Board {
         }
     }
 
+    getImageInfo() {
+        const zoom = this.getZoom()
+        return Core.getCanvasFromStrokeList(this._strokeManager, zoom)
+    }
 }

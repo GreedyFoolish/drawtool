@@ -23,6 +23,11 @@
                          :disabled="getSettingStore.drawMode==='word'"
         />
       </div>
+      <div>
+        <el-button @click.native="mergeSvg">
+          获取笔画
+        </el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -132,6 +137,10 @@ const sliderChange = (value) => {
 
 const colorChange = (color) => {
   getSettingStore.toolbarConfig[curTool.value].color = color
+}
+
+const mergeSvg = () => {
+  getSettingStore.writeBoardIns.getWriteBoardData()
 }
 
 </script>
