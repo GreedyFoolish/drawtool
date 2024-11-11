@@ -32,7 +32,6 @@ const defaultWheel = (e) => {
     getSettingStore.zoomInfo.offsetY = (offsetY + backgroundContainer.value.scrollTop) * magnification - offsetY;
     getSettingStore.zoomInfo.offsetX = (offsetX + backgroundContainer.value.scrollLeft) * magnification - offsetX;
     getSettingStore.zoomInfo.zoom = Math.max(Math.min(max, tempZoom), min);
-    console.log(getSettingStore.zoomInfo)
   }
 };
 

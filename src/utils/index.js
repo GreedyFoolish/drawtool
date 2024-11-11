@@ -20,8 +20,17 @@ export class DrawActionStepper {
     // 操作行为入栈
     addAction(action) {
         this.actions = this.actions.slice(0, this.step);
-        this.actions.push(action);
-        this.step++;
+        // 查询当前笔画是否有前置笔画操作行为是否已经入栈（比如当前笔画要和之前的笔画进行合并）
+        const index = this.actions.findIndex(item => item.data.id === action.data.id)
+        if (index === -1) {
+            // 若没有该前置笔画操作行为，则直接添加即可
+            this.actions.push(action);
+            this.step++;
+        } else {
+            // 若有该前置笔画操作行为，则将前置笔画操作删除并添加最新操作
+            this.actions.splice(index, 1)
+            this.actions.push(action);
+        }
         this.checkAction()
         return this;
     }

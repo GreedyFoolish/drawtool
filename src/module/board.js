@@ -158,6 +158,13 @@ export class Board {
 
     }
 
+    getZoom() {
+        if (this._content?.getAttribute('data-zoom')) {
+            return +this._content?.getAttribute('data-zoom')
+        }
+        return 1
+    }
+
     /**
      * 根据传入 point, rect 和 zoom 计算实际展示需要的坐标信息
      * @param point 鼠标点击点信息
@@ -175,7 +182,7 @@ export class Board {
 
         const down = (e) => {
             const {x, y} = this._writeBoard.getBoundingClientRect()
-            const zoom = this._content?.getAttribute('data-zoom') ? this._content?.getAttribute('data-zoom') : 1
+            const zoom = this.getZoom()
             this.addPoint(id, {
                 x: this.getZoomPoint(e.x, x, zoom),
                 y: this.getZoomPoint(e.y, y, zoom),
@@ -187,7 +194,8 @@ export class Board {
             this._writeBoard.removeEventListener("pointermove", down)
             this._writeBoard.removeEventListener("pointerup", up)
             this._writeBoard.removeEventListener("pointerleave", up)
-            this.triggerEvent("afterDraw", stroke, id, "draw")
+            const mergeStroke = this._strokeManager.mergeStroke(stroke, id, "draw", this._drawConfig.dist)
+            this.triggerEvent("afterDraw", mergeStroke, mergeStroke._id, "draw")
         }
         this._writeBoard.addEventListener("pointermove", down)
         this._writeBoard.addEventListener("pointerup", up)
@@ -197,7 +205,7 @@ export class Board {
     word(e) {
         const {x, y} = this._writeBoard.getBoundingClientRect()
         const start = {x: e.x, y: e.y}
-        const zoom = this._content?.getAttribute('data-zoom') ? this._content?.getAttribute('data-zoom') : 1
+        const zoom = this.getZoom()
         const textarea = new Textarea(
             this,
             {
@@ -214,7 +222,7 @@ export class Board {
         const stroke = new Stroke({...this._drawConfig})
         const id = this._strokeManager.add(stroke)
         const {x, y} = this._writeBoard.getBoundingClientRect()
-        const zoom = this._content?.getAttribute('data-zoom') ? this._content?.getAttribute('data-zoom') : 1
+        const zoom = this.getZoom()
         const start = {
             x: this.getZoomPoint(e.x, x, zoom),
             y: this.getZoomPoint(e.y, y, zoom)
@@ -234,7 +242,8 @@ export class Board {
             this._writeBoard.removeEventListener("pointermove", down)
             this._writeBoard.removeEventListener("pointerup", up)
             this._writeBoard.removeEventListener("pointerleave", up)
-            this.triggerEvent("afterDraw", stroke, id, "straight")
+            const mergeStroke = this._strokeManager.mergeStroke(stroke, id, "straight", this._drawConfig.dist)
+            this.triggerEvent("afterDraw", mergeStroke, mergeStroke._id, "straight")
         }
         this._writeBoard.addEventListener("pointermove", down)
         this._writeBoard.addEventListener("pointerup", up)
@@ -245,7 +254,7 @@ export class Board {
         const stroke = new Stroke({...this._drawConfig})
         const id = this._strokeManager.add(stroke)
         const {x, y} = this._writeBoard.getBoundingClientRect()
-        const zoom = this._content?.getAttribute('data-zoom') ? this._content?.getAttribute('data-zoom') : 1
+        const zoom = this.getZoom()
         const start = {
             x: this.getZoomPoint(e.x, x, zoom),
             y: this.getZoomPoint(e.y, y, zoom)
@@ -265,7 +274,8 @@ export class Board {
             this._writeBoard.removeEventListener("pointermove", down)
             this._writeBoard.removeEventListener("pointerup", up)
             this._writeBoard.removeEventListener("pointerleave", up)
-            this.triggerEvent("afterDraw", stroke, id, "circular")
+            const mergeStroke = this._strokeManager.mergeStroke(stroke, id, "circular", this._drawConfig.dist)
+            this.triggerEvent("afterDraw", mergeStroke, mergeStroke._id, "circular")
         }
         this._writeBoard.addEventListener("pointermove", down)
         this._writeBoard.addEventListener("pointerup", up)
@@ -276,7 +286,7 @@ export class Board {
         const stroke = new Stroke({...this._drawConfig})
         const id = this._strokeManager.add(stroke)
         const {x, y} = this._writeBoard.getBoundingClientRect()
-        const zoom = this._content?.getAttribute('data-zoom') ? this._content?.getAttribute('data-zoom') : 1
+        const zoom = this.getZoom()
         const start = {
             x: this.getZoomPoint(e.x, x, zoom),
             y: this.getZoomPoint(e.y, y, zoom)
@@ -296,7 +306,8 @@ export class Board {
             this._writeBoard.removeEventListener("pointermove", down)
             this._writeBoard.removeEventListener("pointerup", up)
             this._writeBoard.removeEventListener("pointerleave", up)
-            this.triggerEvent("afterDraw", stroke, id, "triangle")
+            const mergeStroke = this._strokeManager.mergeStroke(stroke, id, "triangle", this._drawConfig.dist)
+            this.triggerEvent("afterDraw", mergeStroke, mergeStroke._id, "triangle")
         }
         this._writeBoard.addEventListener("pointermove", down)
         this._writeBoard.addEventListener("pointerup", up)
@@ -305,7 +316,7 @@ export class Board {
 
     addBorder(border) {
         this._writeBoard.innerHTML = ""
-        const zoom = this._content?.getAttribute('data-zoom') ? this._content?.getAttribute('data-zoom') : 1
+        const zoom = this.getZoom()
         if (border) {
             border.style.width = `${parseFloat(border.style.width) / zoom}px`
             border.style.height = `${parseFloat(border.style.height) / zoom}px`

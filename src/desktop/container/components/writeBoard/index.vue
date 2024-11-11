@@ -52,6 +52,8 @@ const config = ref({
     borderWidth: 1,
     // 笔画边透明度，默认值 1
     borderOpacity: 1,
+    // 判断笔画是否合并的距离，默认值 30
+    dist: 30,
   },
   event: [
     // {
@@ -114,9 +116,10 @@ const config = ref({
 })
 
 const revoke = (data) => {
+  const points = [data.svg._points[0], data.svg._points[1]]
   switch (data.type) {
     case "draw":
-      const draw = new Stroke({...data.svg._config}, data.svg._points, data.svg._id)
+      const draw = new Stroke({...data.svg._config}, data.svg._points, data.svg._id, data.type, data.svg._strokeList)
       board._strokeManager.add(draw)
       break
     case "word":
@@ -124,19 +127,16 @@ const revoke = (data) => {
       board._textareaManager.add(word, "revoke")
       break
     case "straight":
-      const straight = new Stroke({...data.svg._config}, [], data.svg._id)
+      const straight = new Stroke({...data.svg._config}, points, data.svg._id, data.type, data.svg._strokeList)
       board._strokeManager.add(straight)
-      straight.addLine(data.svg._points[0], data.svg._points[1])
       break
     case "circular":
-      const circular = new Stroke({...data.svg._config}, [], data.svg._id)
+      const circular = new Stroke({...data.svg._config}, points, data.svg._id, data.type, data.svg._strokeList)
       board._strokeManager.add(circular)
-      circular.addCircular(data.svg._points[0], data.svg._points[1])
       break
     case "triangle":
-      const triangle = new Stroke({...data.svg._config}, [], data.svg._id)
+      const triangle = new Stroke({...data.svg._config}, points, data.svg._id, data.type, data.svg._strokeList)
       board._strokeManager.add(triangle)
-      triangle.addTriangle(data.svg._points[0], data.svg._points[1])
       break
     case "eraser":
       if (data.svg._type === "word") {
@@ -144,6 +144,8 @@ const revoke = (data) => {
       } else {
         board._strokeManager.remove(data.svg)
       }
+      break
+    default:
       break
   }
 }
@@ -181,6 +183,7 @@ onMounted(() => {
 })
 defineExpose({
   setPageAction,
+  getWriteBoardData,
 })
 </script>
 

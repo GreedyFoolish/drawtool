@@ -7,6 +7,7 @@ export class Stroke {
     _strokeManager
     _type = "draw"
     _points = []
+    _strokeList = []
     _id = Core.uuid()
     _g = document.createElementNS("http://www.w3.org/2000/svg", "g")
     _offset = new Proxy(
@@ -22,15 +23,16 @@ export class Stroke {
         }
     )
 
-    constructor(config, points, id) {
+    constructor(config, points, id, type = "draw", strokeList = []) {
         if (id) {
             this._id = id
         }
         this._config = JSON.parse(JSON.stringify({...this._config, ...config}))
+        this._strokeList = [...this._strokeList, ...strokeList ?? []]
         this.reDraw()
         this.add(points)
         this.addEvent()
-        this._type = "draw"
+        this._type = type
     }
 
     /**
@@ -55,6 +57,7 @@ export class Stroke {
             }
         }
         this.reDraw()
+        this._g.setAttribute("data-type", "draw")
         return this
     }
 
@@ -123,6 +126,7 @@ export class Stroke {
         }
         this._points = [start, end]
         this._g.innerHTML = Core.getLinePathFromStroke(this, start, end)
+        this._g.setAttribute("data-type", "straight")
         this._type = "straight"
     }
 
@@ -132,6 +136,7 @@ export class Stroke {
         }
         this._points = [start, end]
         this._g.innerHTML = Core.getCircularPathFromStroke(this, start, end)
+        this._g.setAttribute("data-type", "circular")
         this._type = "circular"
     }
 
@@ -141,6 +146,7 @@ export class Stroke {
         }
         this._points = [start, end]
         this._g.innerHTML = Core.getTrianglePathFromStroke(this, start, end)
+        this._g.setAttribute("data-type", "triangle")
         this._type = "triangle"
     }
 
@@ -161,6 +167,14 @@ export class Stroke {
 
     unMount() {
         this._g.remove()
+    }
+
+    /**
+     * 将传入的笔画信息挂载到笔画列表
+     * @param stroke 传入的笔画信息
+     */
+    addStrokeList(stroke) {
+        this._strokeList = [...this._strokeList, stroke]
     }
 
     /**
